@@ -2,6 +2,11 @@ import os
 import subprocess
 from hateSpeechClassifier.logger import logging
 from colorama import Fore, Style
+from dotenv import load_dotenv
+
+load_dotenv()
+
+ROOT_DIR = os.getenv("ROOT_DIR")
 
 
 def get_all_python_files(directory):
@@ -31,6 +36,6 @@ def lint_python_files(files):
 
 
 if __name__ == "__main__":
-    project_directory = "/home/kalema/Projects/Hate-Speech-Text-Classification-NLP"
+    project_directory = ROOT_DIR
     all_python_files = get_all_python_files(project_directory)
     lint_python_files(all_python_files)
