@@ -1,19 +1,23 @@
-import os 
 import sys as system
 
-def error_message_detail(error, error_detail: system):
-    _, _, exc_tb = error_detail.exc_info()
-    file_name = exc_tb.tb_frame.f_code.co_filename
-    error_message = "Error occurred python script name [{0}] line number [{0}] error message [{2}]".format(
-        file_name, exc_tb.tb_lineno, str(error)
-    )
+
+def generate_error_message(error, error_detail: system):
+    try:
+        _, _, exc_tb = error_detail.exc_info()
+        file_name = exc_tb.tb_frame.f_code.co_filename
+        line_number = exc_tb.tb_lineno
+        error_message = "Error occurred in file [{0}] at line number [{1}]: {2}".format(
+            file_name, line_number, str(error))
+    except AttributeError:
+        error_message = "An error occurred hence could not retrieve traceback information."
 
     return error_message
+
 
 class CustomException(Exception):
     def __init__(self, error_message, error_detail):
         super().__init__(error_message)
-        self.error_message = error_message_detail(
+        self.error_message = generate_error_message(
             error_message, error_detail=error_detail
         )
 
