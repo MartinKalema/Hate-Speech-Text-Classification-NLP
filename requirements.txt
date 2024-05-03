@@ -1,0 +1,14 @@
+pandas
+numpy
+tensorflow==2.12.0
+matplotlib
+seaborn
+nltk
+regex
+scikit-learn
+from-root
+google-cloud-storage
+fastapi
+uvicorn
+Jinja2
+-e .
