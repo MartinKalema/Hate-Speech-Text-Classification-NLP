@@ -28,6 +28,7 @@ list_of_files = [
     f"src/{project_name}/exception/__init__.py",
     f"src/{project_name}/logger/__init__.py",
     f"src/{project_name}/configuration/__init__.py",
+    f"src/{project_name}/configuration/gcloud_syncer.py",
     "config/config.yaml",
     "params.yaml",
     "requirements.txt",
