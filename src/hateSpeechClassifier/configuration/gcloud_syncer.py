@@ -1,5 +1,6 @@
 import os
 
+
 class GoogleCloudSync:
     def __init__(self) -> None:
         pass

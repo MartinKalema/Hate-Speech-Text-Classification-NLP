@@ -3,13 +3,14 @@ import subprocess
 from hateSpeechClassifier.logger import logging
 from colorama import Fore, Style
 from dotenv import load_dotenv
+from typing import List
 
 load_dotenv()
 
 ROOT_DIR = os.getenv("ROOT_DIR")
 
 
-def get_all_python_files(directory):
+def get_all_python_files(directory: str) -> List[str]:
     python_files = []
     for root, _, files in os.walk(directory):
         for file in files:
@@ -18,24 +19,39 @@ def get_all_python_files(directory):
     return python_files
 
 
-def lint_python_files(files):
-    for file in files:
-        subprocess.run(['autopep8', '--in-place',
-                       '--aggressive', '--aggressive', file])
+def execute_command(command: List[str]) -> subprocess.CompletedProcess:
+    try:
+        process = subprocess.run(command, capture_output=True, text=True)
+        return process
+    except FileNotFoundError as e:
+        logging.error(f"Command '{command}' not found: {e}")
+        raise e
 
-        flake8_process = subprocess.run(
-            ['flake8', file], capture_output=True, text=True)
-        if flake8_process.returncode != 0:
-            logging.error(f"Flake8 found errors in file: {file}")
-            logging.error(flake8_process.stdout)
 
-            print(f"{Fore.RED}Flake8 found errors in file: {file}{Style.RESET_ALL}")
-            print(f"{Fore.RED}{flake8_process.stdout}{Style.RESET_ALL}")
+def lint_python_file(file: str) -> None:
+    autopep8_process = execute_command(
+        ['autopep8', '--in-place', '--aggressive', '--aggressive', file])
+    if autopep8_process.returncode != 0:
+        logging.error(f"Autopep8 failed to lint file: {file}")
+        logging.error(autopep8_process.stdout)
+        return
 
+    flake8_process = execute_command(['flake8', file])
+    if flake8_process.returncode != 0:
+        logging.error(f"Flake8 found errors in file: {file}")
+        logging.error(flake8_process.stdout)
+        print(f"{Fore.RED}{flake8_process.stdout}{Style.RESET_ALL}")
+    else:
         print(f"Linted file: {file}")
 
 
-if __name__ == "__main__":
+def main():
     project_directory = ROOT_DIR
     all_python_files = get_all_python_files(project_directory)
-    lint_python_files(all_python_files)
+    for file in all_python_files:
+        lint_python_file(file)
+
+
+if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.WARNING)
+    main()
