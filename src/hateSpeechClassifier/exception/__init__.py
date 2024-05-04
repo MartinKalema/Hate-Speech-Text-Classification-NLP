@@ -3,11 +3,14 @@ import sys as system
 
 def generate_error_message(error, error_detail: system):
     try:
-        _, _, exc_tb = error_detail.exc_info()
+        exc_type, exc_value, exc_tb = error_detail.exc_info()
         file_name = exc_tb.tb_frame.f_code.co_filename
         line_number = exc_tb.tb_lineno
         error_message = "Error occurred in file [{0}] at line number [{1}]: {2}".format(
             file_name, line_number, str(error))
+        error_message += f"\nException type: {exc_type.__name__}"
+
+        error_message += f"\nException value: {str(exc_value)}"
     except AttributeError:
         error_message = "An error occurred hence could not retrieve traceback information."
 
